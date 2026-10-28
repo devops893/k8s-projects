@@ -1,7 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: avp-config
+  name: app-config
   namespace: default
+  annotations:
+    avp.kubernetes.io/path: "secret/data/core/common"
 data:
-  status: ready
+  db_host: <PG_HOST>
+  db_pass: <PG_MIGRATION_PASSWORD>
+  redis: <REDIS_URI>
+  rabbit: <RABBITMQ_PASSWORD>
+  sentry: <SENTRY_DSN>
