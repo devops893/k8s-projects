@@ -24,6 +24,7 @@ metadata:
   namespace: default
   labels:
     app: monitoring
+    version: "2"
 spec:
   serviceAccountName: cluster-ops
   hostPID: true
